@@ -240,6 +240,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e0fe17460d68e45bb225fcd8e2348f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShootPoint: {fileID: 974150641362780588}
+  Bullet: {fileID: 0}
+  Lives: 5
+  CurrentLives: 5
+  ViewDistance: 1.35
+  FireRate: 1.1
+  Force: 500
+  Speed: 1.5
+  isChildTurret: 0
 --- !u!1 &974150641729674326
 GameObject:
   m_ObjectHideFlags: 0

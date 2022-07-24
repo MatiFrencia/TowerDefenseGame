@@ -40,7 +40,7 @@ public class Turret : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -67,9 +67,80 @@ public class Turret : MonoBehaviour
             {
                 if (rayInfo.collider.gameObject.tag == "Unit")
                 {
-
+                    if (Detected == false)
+                    {
+                        Detected = true;
+                    }
+                }
+                else
+                {
+                    if (Detected == true)
+                    {
+                        Detected = false;
+                    }
+                }
+            }
+            if (Detected)
+            {
+                if (Time.time > nextTimeToFire)
+                {
+                    nextTimeToFire = Time.time + 1 / FireRate;
+                    Shoot();
                 }
             }
         }
     }
+    void Shoot() 
+    {
+        //LevelManager.Instance.CalculateCriticalFactor();
+        GameObject BulletIns = Instantiate(Bullet, ShootPoint.position, Quaternion.identity);
+        BulletIns.GetComponent<Rigidbody2D>().AddForce(Direction * Force * Speed);
+        //LevelManager.Instance.Damage = LevelManager.Instance.oldDamage;
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        //Draw View Distance
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, ViewDistance);
+        // Draw View Deaw Collision Area
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, .25f);
+        // Draw View Draw Enemy distance from player
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(transform.position, closeEnemyRef);
+    }
+    
+    private void UpdateTarget()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Unit");
+        float shortDistance = Mathf.Infinity;
+        GameObject closeEnemy = null;
+
+        foreach (GameObject enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+
+            if (isChildTurret && distance <= .35f)
+            {
+                Destroy(gameObject);
+            }
+            if (distance < shortDistance)
+            {
+                shortDistance = distance;
+                closeEnemy = enemy;
+                closeEnemyRef = enemy.transform.position;
+            }
+        }
+        if (closeEnemy != null && shortDistance <= ViewDistance)
+        {
+            Target = closeEnemy.transform;
+        }
+        else
+        {
+            Target = null;
+        }
+    }
+
 }
